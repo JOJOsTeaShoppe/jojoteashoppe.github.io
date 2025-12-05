@@ -150,9 +150,10 @@ function createSnowflake() {
     snowflake.innerHTML = '❄';
     snowflake.style.left = Math.random() * 100 + '%';
     snowflake.style.animationDuration = (Math.random() * 3 + 2) + 's';
-    snowflake.style.opacity = Math.random() * 0.8 + 0.2; // Opacity between 0.2 and 1
-    snowflake.style.fontSize = (Math.random() * 15 + 15) + 'px';
+    snowflake.style.opacity = Math.random() * 0.7 + 0.5; // Opacity between 0.5 and 1.2 (more visible)
+    snowflake.style.fontSize = (Math.random() * 20 + 20) + 'px'; // Larger snowflakes
     snowflake.style.animationDelay = Math.random() * 2 + 's';
+    snowflake.style.zIndex = '9999';
     
     const container = document.getElementById('snowflakes-container');
     if (container) {
@@ -164,18 +165,18 @@ function createSnowflake() {
             if (snowflake.parentNode) {
                 snowflake.parentNode.removeChild(snowflake);
             }
-        }, duration);
+        }, duration + 1000);
     }
 }
 
 // Create snowflakes periodically
 function startSnowfall() {
-    // Create initial snowflakes
-    for (let i = 0; i < 20; i++) {
-        setTimeout(() => createSnowflake(), i * 200);
+    // Create initial snowflakes immediately
+    for (let i = 0; i < 30; i++) {
+        setTimeout(() => createSnowflake(), i * 100);
     }
-    // Continue creating snowflakes
-    setInterval(createSnowflake, 500);
+    // Continue creating snowflakes more frequently
+    setInterval(createSnowflake, 300);
 }
 
 // Start snowfall when page loads

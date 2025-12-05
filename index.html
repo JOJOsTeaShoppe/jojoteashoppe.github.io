@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jojo Tea Shoppe - Home</title>
-    <link rel="stylesheet" href="home.css">
+    <script src="version.js"></script>
+    <script>
+        // Load CSS with version to bust cache on deployment
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'home.css?v=' + (window.APP_VERSION || Date.now());
+        document.head.appendChild(link);
+    </script>
 
 </head>
 <body>
@@ -20,10 +27,10 @@
 </header>
 
 <!-- Container for the Top Scroll View -->
-<iframe src="top_scroll_view.html" id="topScrollView" width="100%" height="400px" style="border: none; background: transparent;"></iframe>
+<iframe id="topScrollView" width="100%" height="400px" style="border: none; background: transparent;"></iframe>
 
 <!-- Container for the Tag Scroll View -->
-<iframe src="tag_scroll_view.html" id="tagScrollView" width="100%" height="" style="border: none; margin-top: 20px; background: transparent;"></iframe>
+<iframe id="tagScrollView" width="100%" height="" style="border: none; margin-top: 20px; background: transparent;"></iframe>
 
 <!-- Container for the Product Details -->
 <!-- Container for the Product Details (Modal) -->
@@ -54,7 +61,7 @@
 <!-- Footer Section -->
 <footer class="footer">
     <div class="footer-left">
-        <iframe src="envslide.html" id="envslideView" width="100%" height="500px" style="border: none; margin-top: 20px; background: transparent;"></iframe>
+        <iframe id="envslideView" width="100%" height="500px" style="border: none; margin-top: 20px; background: transparent;"></iframe>
     </div>
 
     <div class="footer-right">
@@ -106,9 +113,17 @@
 <!-- Christmas Snowflakes -->
 <div id="snowflakes-container"></div>
 
-<script src="home.js"></script>
 <script>
-
+    // Set iframe sources with version to bust cache on deployment
+    const version = window.APP_VERSION || Date.now();
+    document.getElementById('topScrollView').src = 'top_scroll_view.html?v=' + version;
+    document.getElementById('tagScrollView').src = 'tag_scroll_view.html?v=' + version;
+    document.getElementById('envslideView').src = 'envslide.html?v=' + version;
+    
+    // Load home.js with version
+    const script = document.createElement('script');
+    script.src = 'home.js?v=' + version;
+    document.body.appendChild(script);
 </script>
 </body>
 </html>

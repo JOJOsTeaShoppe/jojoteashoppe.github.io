@@ -7,12 +7,23 @@ body {
 
 .tag-scroll-view {
     background: transparent;
+    min-height: 100vh;
+}
+
+.scroll-container {
+    background: transparent !important;
+    min-height: 100vh;
+}
+
+#tagsContainer {
+    background: transparent !important;
 }
 
 /* Container for each section */
 .section-container {
     margin-bottom: 20px;
     padding: 10px;
+    background: transparent;
 }
 
 /* Section title */
@@ -28,6 +39,7 @@ body {
     overflow-x: auto; /* Allows horizontal scrolling */
     gap: 10px;
     padding: 10px;
+    background: transparent;
 }
 
 /* Tag item */

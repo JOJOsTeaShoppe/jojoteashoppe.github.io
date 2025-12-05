@@ -48,4 +48,10 @@ const observer = new MutationObserver(() => {
     sendHeightToParent();
 });
 
-observer.observe(document.getElementById('slideshow-container'), { childList: true, subtree: true });
+// Wait for DOM to be ready before observing
+document.addEventListener('DOMContentLoaded', () => {
+    const slideshowContainer = document.querySelector('.slideshow-container') || document.body;
+    if (slideshowContainer) {
+        observer.observe(slideshowContainer, { childList: true, subtree: true });
+    }
+});
