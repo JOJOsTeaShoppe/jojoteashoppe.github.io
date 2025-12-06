@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Verification - Jojo Tea Shoppe</title>
+    <script src="version.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background stars */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 40%, white, transparent),
+                radial-gradient(1px 1px at 33% 60%, white, transparent),
+                radial-gradient(3px 3px at 10% 80%, white, transparent);
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.4;
+            animation: sparkle 20s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes sparkle {
+            from { transform: translateY(0); }
+            to { transform: translateY(-200px); }
+        }
+
+        .verify-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-container img {
+            height: 60px;
+            width: auto;
+            margin-bottom: 15px;
+        }
+
+        .verify-container h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .verify-container h2 {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: normal;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .phone-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .phone-input-group input {
+            flex: 1;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .request-code-btn {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .request-code-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .request-code-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #43a047 0%, #1b5e20 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .opt-in-section {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+
+        .opt-in-section h3 {
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .opt-in-text {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .opt-in-text:last-child {
+            margin-bottom: 0;
+            font-size: 0.85rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .consent-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .consent-checkbox input[type="checkbox"] {
+            width: auto;
+            margin-top: 3px;
+            cursor: pointer;
+        }
+
+        .consent-checkbox label {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            color: #2e7d32;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .countdown {
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        @media screen and (max-width: 768px) {
+            .verify-container {
+                padding: 30px 20px;
+            }
+
+            .verify-container h1 {
+                font-size: 1.5rem;
+            }
+
+            .verify-container h2 {
+                font-size: 1rem;
+            }
+
+            .phone-input-group {
+                flex-direction: column;
+            }
+
+            .request-code-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="verify-container">
+        <div class="logo-container">
+            <img src="logo.png" alt="JOJO TEA SHOPPE Logo">
+            <h1>Phone Verification</h1>
+            <h2>Verify your phone number</h2>
+        </div>
+
+        <form id="verifyForm">
+            <div class="form-group">
+                <label for="phoneNumber">Mobile Number</label>
+                <div class="phone-input-group">
+                    <input 
+                        type="tel" 
+                        id="phoneNumber" 
+                        name="phoneNumber" 
+                        placeholder="(123) 456-7890"
+                        required
+                        pattern="[0-9]{10}"
+                        maxlength="10"
+                    >
+                    <button type="button" class="request-code-btn" id="requestCodeBtn">
+                        Request Code
+                    </button>
+                </div>
+                <div class="error-message" id="phoneError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="verificationCode">Verification Code</label>
+                <input 
+                    type="text" 
+                    id="verificationCode" 
+                    name="verificationCode" 
+                    placeholder="Enter 6-digit code"
+                    required
+                    pattern="[0-9]{6}"
+                    maxlength="6"
+                    disabled
+                >
+                <div class="error-message" id="codeError"></div>
+                <div class="success-message" id="codeSuccess"></div>
+                <div class="countdown" id="countdown"></div>
+            </div>
+
+            <!-- Opt-in Section with Compliant Text -->
+            <div class="opt-in-section">
+                <h3>📱 SMS Verification Consent</h3>
+                <p class="opt-in-text">
+                    To verify your phone number, enter your mobile number and request a verification code.
+                </p>
+                <p class="opt-in-text">
+                    By requesting a code, you consent to receive a one-time SMS for authentication.
+                </p>
+                <p class="opt-in-text">
+                    Message & data rates may apply.
+                </p>
+                <div class="consent-checkbox">
+                    <input 
+                        type="checkbox" 
+                        id="consentCheckbox" 
+                        name="consent" 
+                        required
+                    >
+                    <label for="consentCheckbox">
+                        I understand and consent to receive a one-time SMS verification code. 
+                        I acknowledge that message and data rates may apply.
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                Verify Phone Number
+            </button>
+        </form>
+
+        <div class="back-link">
+            <a href="index.html">← Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        const phoneInput = document.getElementById('phoneNumber');
+        const codeInput = document.getElementById('verificationCode');
+        const requestCodeBtn = document.getElementById('requestCodeBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const consentCheckbox = document.getElementById('consentCheckbox');
+        const verifyForm = document.getElementById('verifyForm');
+        const phoneError = document.getElementById('phoneError');
+        const codeError = document.getElementById('codeError');
+        const codeSuccess = document.getElementById('codeSuccess');
+        const countdownEl = document.getElementById('countdown');
+
+        let countdownTimer = null;
+        let countdownSeconds = 0;
+
+        // Format phone number as user types
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 10) value = value.slice(0, 10);
+            
+            if (value.length > 0) {
+                let formatted = '';
+                if (value.length <= 3) {
+                    formatted = `(${value}`;
+                } else if (value.length <= 6) {
+                    formatted = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+                } else {
+                    formatted = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6)}`;
+                }
+                e.target.value = formatted;
+            } else {
+                e.target.value = '';
+            }
+            
+            validatePhone();
+        });
+
+        // Format verification code (numbers only)
+        codeInput.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
+            validateCode();
+        });
+
+        function validatePhone() {
+            const phone = phoneInput.value.replace(/\D/g, '');
+            if (phone.length === 10) {
+                phoneError.classList.remove('show');
+                phoneError.textContent = '';
+                return true;
+            } else {
+                phoneError.classList.add('show');
+                phoneError.textContent = 'Please enter a valid 10-digit phone number';
+                return false;
+            }
+        }
+
+        function validateCode() {
+            const code = codeInput.value;
+            if (code.length === 6) {
+                codeError.classList.remove('show');
+                codeError.textContent = '';
+                codeSuccess.classList.add('show');
+                codeSuccess.textContent = '✓ Code format is valid';
+                updateSubmitButton();
+                return true;
+            } else {
+                codeSuccess.classList.remove('show');
+                if (code.length > 0) {
+                    codeError.classList.add('show');
+                    codeError.textContent = 'Please enter a 6-digit verification code';
+                } else {
+                    codeError.classList.remove('show');
+                }
+                updateSubmitButton();
+                return false;
+            }
+        }
+
+        function updateSubmitButton() {
+            const phone = phoneInput.value.replace(/\D/g, '');
+            const code = codeInput.value;
+            const consent = consentCheckbox.checked;
+            
+            if (phone.length === 10 && code.length === 6 && consent && !codeInput.disabled) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        // Request verification code
+        requestCodeBtn.addEventListener('click', function() {
+            if (!validatePhone()) {
+                return;
+            }
+
+            const phone = phoneInput.value.replace(/\D/g, '');
+            
+            // Disable button and start countdown
+            requestCodeBtn.disabled = true;
+            codeInput.disabled = false;
+            codeInput.focus();
+            
+            // Start 60-second countdown
+            countdownSeconds = 60;
+            updateCountdown();
+            countdownTimer = setInterval(() => {
+                countdownSeconds--;
+                if (countdownSeconds <= 0) {
+                    clearInterval(countdownTimer);
+                    requestCodeBtn.disabled = false;
+                    countdownEl.textContent = '';
+                } else {
+                    updateCountdown();
+                }
+            }, 1000);
+
+            // TODO: Replace with actual API call to send SMS
+            console.log('Requesting verification code for:', phone);
+            
+            // Simulate API call
+            setTimeout(() => {
+                // In production, this would be an actual API call
+                alert('Verification code sent! (Demo: Use any 6-digit number)');
+            }, 500);
+        });
+
+        function updateCountdown() {
+            countdownEl.textContent = `You can request a new code in ${countdownSeconds} seconds`;
+        }
+
+        // Update submit button when consent checkbox changes
+        consentCheckbox.addEventListener('change', updateSubmitButton);
+
+        // Handle form submission
+        verifyForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!validatePhone() || !validateCode() || !consentCheckbox.checked) {
+                return;
+            }
+
+            const phone = phoneInput.value.replace(/\D/g, '');
+            const code = codeInput.value;
+
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Verifying...';
+
+            // TODO: Replace with actual API call to verify code
+            console.log('Verifying code:', code, 'for phone:', phone);
+            
+            // Simulate API call
+            setTimeout(() => {
+                // In production, this would be an actual API call
+                alert('Phone number verified successfully! (This is a demo)');
+                submitBtn.textContent = 'Verify Phone Number';
+                submitBtn.disabled = false;
+                
+                // Optionally redirect or show success message
+                // window.location.href = 'index.html';
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
+
